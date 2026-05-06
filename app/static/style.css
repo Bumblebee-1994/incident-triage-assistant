@@ -1,0 +1,300 @@
+/* Incident Triage Assistant — dashboard styling.
+   Deliberately self-contained, no external CSS frameworks. */
+
+:root {
+  --bg: #f5f6f8;
+  --card: #ffffff;
+  --text: #1c1d1f;
+  --text-muted: #6b6f76;
+  --border: #e3e6eb;
+  --accent: #185fa5;
+  --accent-soft: #e6f1fb;
+  --good: #0f6e56;
+  --good-soft: #e1f5ee;
+  --warn: #854f0b;
+  --warn-soft: #fceedf;
+  --danger: #a32d2d;
+  --shadow: 0 1px 2px rgba(20, 25, 40, 0.04), 0 4px 12px rgba(20, 25, 40, 0.05);
+  --radius: 10px;
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.topbar {
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand { display: flex; align-items: center; gap: 10px; }
+
+.brand-mark {
+  width: 24px; height: 24px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #185fa5 0%, #0f6e56 100%);
+  display: inline-block;
+}
+
+.brand h1 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.tagline {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.container {
+  max-width: 1180px;
+  margin: 24px auto 60px;
+  padding: 0 24px;
+  display: grid;
+  gap: 20px;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px 24px;
+}
+
+.card h2 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.card h3 {
+  margin: 0 0 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.muted { color: var(--text-muted); font-size: 13px; margin: 0 0 12px; }
+
+.input-card label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  margin: 12px 0 4px;
+}
+
+.input-card select,
+.input-card input,
+.input-card textarea {
+  width: 100%;
+  padding: 9px 11px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--text);
+  background: #fff;
+}
+
+.input-card textarea { resize: vertical; }
+
+.input-card select:focus,
+.input-card input:focus,
+.input-card textarea:focus {
+  outline: 2px solid var(--accent-soft);
+  border-color: var(--accent);
+}
+
+.divider {
+  display: flex; align-items: center; gap: 10px;
+  margin: 14px 0 4px;
+  color: var(--text-muted);
+  font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em;
+}
+
+.divider::before, .divider::after {
+  content: ""; flex: 1; height: 1px; background: var(--border);
+}
+
+button.primary {
+  margin-top: 14px;
+  padding: 10px 18px;
+  font-size: 14px; font-weight: 600;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+button.primary:hover { background: #134d85; }
+button.primary:disabled { background: #9bb6cf; cursor: not-allowed; }
+
+.status {
+  margin-left: 12px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.results.hidden { display: none; }
+
+.prediction-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 720px) {
+  .prediction-grid { grid-template-columns: 1fr; }
+}
+
+.pred-top {
+  font-family: var(--mono);
+  font-size: 14px;
+  padding: 6px 9px;
+  background: var(--accent-soft);
+  color: #0c447c;
+  border-radius: 6px;
+  display: inline-block;
+  margin: 4px 0 8px;
+}
+
+.pred-conf {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-left: 8px;
+}
+
+ul.probs {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+ul.probs li {
+  display: flex; justify-content: space-between;
+  padding: 3px 0;
+  font-family: var(--mono);
+}
+
+.kba-card, .similar-card {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin: 10px 0;
+  background: #fbfbfc;
+}
+
+.kba-header, .similar-header {
+  display: flex; justify-content: space-between; align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.kba-id, .similar-id {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.score-pill {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 12px;
+  font-family: var(--mono);
+  border-radius: 999px;
+  background: var(--good-soft);
+  color: var(--good);
+}
+
+.score-pill.low { background: var(--warn-soft); color: var(--warn); }
+
+.no-match {
+  padding: 14px;
+  background: var(--warn-soft);
+  color: var(--warn);
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--border);
+  margin: 8px 0 12px;
+  overflow-x: auto;
+}
+
+.tab-btn {
+  padding: 8px 14px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  transition: color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+
+.tab-btn.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.artifact {
+  background: #fbfbfc;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 540px;
+  overflow-y: auto;
+  margin: 0;
+}
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-top: 12px;
+}
+
+@media (max-width: 720px) {
+  .charts-grid { grid-template-columns: 1fr; }
+}
+
+.charts-grid figure { margin: 0; }
+.charts-grid img { width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--border); }
+.charts-grid figcaption { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
+
+footer {
+  text-align: center;
+  padding: 18px 24px 28px;
+  color: var(--text-muted);
+}

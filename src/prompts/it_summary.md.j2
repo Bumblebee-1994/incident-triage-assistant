@@ -1,0 +1,65 @@
+{# it_summary.md.j2
+   Shown to the IT AGENT picking up the incident.
+   Tone: terse, technical, evidence-led.
+   Every "hypothesis" must be backed by a real similar incident or KBA.
+#}
+# Triage brief — {{ incident.number }}
+
+**Reported by:** {{ incident.caller_id | default("unknown") }}
+**Priority:** {{ incident.priority }}
+**Created:** {{ incident.sys_created_on }}
+
+## What was reported
+
+> {{ incident.short_description }}
+
+{% if incident.description and incident.description|length > 5 %}
+{{ incident.description | truncate(800, true, "...") }}
+{% endif %}
+
+## Predicted routing
+
+| Field | Top prediction | Confidence | 2nd | 3rd |
+|---|---|---|---|---|
+| Assignment group | `{{ predicted_group_top3[0].label }}` | {{ "%.0f"|format(predicted_group_top3[0].prob*100) }}% | `{{ predicted_group_top3[1].label }}` ({{ "%.0f"|format(predicted_group_top3[1].prob*100) }}%) | `{{ predicted_group_top3[2].label }}` ({{ "%.0f"|format(predicted_group_top3[2].prob*100) }}%) |
+| Business service | `{{ predicted_service_top3[0].label }}` | {{ "%.0f"|format(predicted_service_top3[0].prob*100) }}% | `{{ predicted_service_top3[1].label }}` ({{ "%.0f"|format(predicted_service_top3[1].prob*100) }}%) | `{{ predicted_service_top3[2].label }}` ({{ "%.0f"|format(predicted_service_top3[2].prob*100) }}%) |
+
+## Ranked root-cause hypotheses
+
+These are derived from the close notes of historically similar incidents.
+
+{% if similar_incidents %}
+{% for si in similar_incidents %}
+**{{ loop.index }}. {{ si.close_code }}** — similarity {{ "%.2f"|format(si.score) }}
+> _{{ si.short_description | truncate(140, true, "...") }}_ ({{ si.number }})
+{% if si.close_notes_excerpt %}
+> Close notes: {{ si.close_notes_excerpt | truncate(220, true, "...") }}
+{% endif %}
+
+{% endfor %}
+{% else %}
+_No similar historical incidents found._
+{% endif %}
+
+## Possible resolution paths
+
+Based on the close codes of the {{ similar_incidents|length }} most similar past incidents:
+
+{% set close_codes = similar_incidents | map(attribute='close_code') | list %}
+{% set unique_codes = close_codes | unique | list %}
+{% for code in unique_codes %}
+- **{{ code }}** *(used in {{ close_codes|select("equalto", code)|list|length }} of {{ close_codes|length }} matches)*
+{% endfor %}
+
+## KBA references
+
+{% if kba_matches and kba_matches[0].score >= kba_threshold %}
+{% for kba in kba_matches %}
+- **{{ kba.kb_number }}** ({{ "%.2f"|format(kba.score) }}) — {{ kba.short_description }}
+{% endfor %}
+{% else %}
+_No KBA scored above the {{ "%.2f"|format(kba_threshold) }} similarity threshold. Treat this as a non-routine case._
+{% endif %}
+
+---
+*Generated automatically. All hypotheses are evidence-grounded — verify before acting.*

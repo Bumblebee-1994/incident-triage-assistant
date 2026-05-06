@@ -1,0 +1,62 @@
+# =============================================================
+# Incident Triage Assistant — single source of truth for paths
+# and parameters. Edit values here, then rerun the pipeline.
+# =============================================================
+
+paths:
+  incidents_xlsx: "data/raw/incident_dump.xlsx"
+  kb_xlsx: "data/raw/kb_template_how_to.xlsx"
+  processed_dir: "data/processed"
+  splits_dir: "data/splits"
+  models_dir: "models"
+  reports_dir: "reports"
+  samples_dir: "reports/samples"
+  figures_dir: "reports/figures"
+  metrics_dir: "reports/metrics"
+
+split:
+  train_ratio: 0.70
+  val_ratio: 0.15
+  test_ratio: 0.15
+  random_seed: 42
+  # Drop classes (assignment_group, business_service) with fewer than
+  # this many samples — they cannot be split stratified and are not
+  # learnable. They remain available for retrieval, just not classification.
+  min_class_samples: 5
+
+tfidf:
+  # Shared by classifier and retrieval indexes.
+  max_features: 50000
+  ngram_range: [1, 2]
+  min_df: 2
+  max_df: 0.95
+  sublinear_tf: true
+  strip_accents: "unicode"
+
+classifier:
+  # LogisticRegression with class_weight='balanced' is robust for
+  # severely imbalanced problems and trains fast.
+  C: 1.0
+  max_iter: 1000
+  class_weight: "balanced"
+
+retrieval:
+  # KBA gate — only show a KBA recommendation when cosine
+  # similarity is above this threshold. This is the central
+  # safeguard against the "force a recommendation" anti-pattern.
+  # 0.25 is a balanced default: empirically the 90th percentile of
+  # noise on this dataset is ~0.23, so 0.25 admits real matches while
+  # keeping false positives low. Increase to 0.35 for stricter behavior.
+  kba_threshold: 0.25
+  kba_top_k: 3
+  similar_incidents_top_k: 5
+
+generation:
+  # Number of demo incidents to pre-generate samples for.
+  # Picked from the test split for honest demo.
+  num_sample_incidents: 5
+
+flask:
+  host: "127.0.0.1"
+  port: 5000
+  debug: true

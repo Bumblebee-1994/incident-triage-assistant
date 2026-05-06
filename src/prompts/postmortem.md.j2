@@ -1,0 +1,77 @@
+{# postmortem.md.j2
+   Draft postmortem.  Filled out from incident metadata + retrieved evidence.
+   The owner edits the [BLANK] sections after the incident is closed.
+#}
+# Draft postmortem — {{ incident.number }}
+
+> **Status:** DRAFT — auto-generated from ticket data and historical neighbors. Owner must review and complete the `[BLANK]` sections before publishing.
+
+## Summary
+
+- **Incident:** {{ incident.number }}
+- **Reported:** {{ incident.sys_created_on }}
+{% if incident.resolved_at %}- **Resolved:** {{ incident.resolved_at }}
+{% endif %}- **Reporter:** {{ incident.caller_id | default("[BLANK]") }}
+- **Priority:** {{ incident.priority }}
+- **Predicted assignment group:** {{ predicted_group_top3[0].label }} ({{ "%.0f"|format(predicted_group_top3[0].prob*100) }}%)
+- **Predicted business service:** {{ predicted_service_top3[0].label }} ({{ "%.0f"|format(predicted_service_top3[0].prob*100) }}%)
+
+## What happened
+
+> {{ incident.short_description }}
+
+{% if incident.description %}
+{{ incident.description | truncate(600, true, "...") }}
+{% endif %}
+
+## Impact
+
+- **Users affected:** [BLANK — one user / a team / a region / org-wide]
+- **Business service:** {{ predicted_service_top3[0].label }}
+- **Duration:** [BLANK — fill in from `sys_created_on` to `resolved_at`]
+
+## Likely root cause (evidence-based)
+
+The closest historical incidents resolved with these close codes:
+
+{% if similar_incidents %}
+{% set codes = similar_incidents | map(attribute='close_code') | list %}
+{% for code in codes | unique %}
+- **{{ code }}** ({{ codes|select("equalto", code)|list|length }}/{{ codes|length }} of similar tickets)
+{% endfor %}
+
+The single most similar past incident, **{{ similar_incidents[0].number }}**, was resolved as:
+> {{ similar_incidents[0].close_notes_excerpt | truncate(280, true, "...") }}
+{% else %}
+_No closely-matching historical incidents — root cause requires manual investigation._
+{% endif %}
+
+## Resolution
+
+[BLANK — describe the actual fix that was applied. Reference the close code chosen.]
+
+## Detection
+
+- **How was it noticed?** [BLANK — user report / monitoring alert / batch job failure]
+- **Time from start to detection:** [BLANK]
+
+## Timeline
+
+| Time | Event |
+|---|---|
+| {{ incident.sys_created_on }} | Incident reported |
+{% if incident.resolved_at %}| {{ incident.resolved_at }} | Incident resolved |
+{% endif %}| [BLANK] | [BLANK] |
+
+## Action items
+
+- [ ] [BLANK — preventative action]
+- [ ] [BLANK — monitoring / alerting improvement]
+- [ ] [BLANK — KBA update or creation]
+
+## Lessons learned
+
+[BLANK — short paragraph from the resolver.]
+
+---
+*Draft generated automatically. Sections marked `[BLANK]` need owner input before this postmortem is final.*

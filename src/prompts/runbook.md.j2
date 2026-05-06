@@ -1,0 +1,65 @@
+{# runbook.md.j2
+   Actionable runbook for the agent. EVERY step must be:
+     - non-destructive
+     - generic (no host names, no production commands)
+     - reversible
+   We do not auto-suggest data deletion, restart commands on prod
+   resources, or anything that would touch a live system.
+#}
+# Runbook — {{ incident.number }}
+
+> **Scope:** Initial triage only. Escalate before performing any change that touches a production system.
+
+## 1. Acknowledge
+
+- [ ] Set ticket state to **In Progress** in your ITSM tool.
+- [ ] Add a brief comment on the ticket: *"Picking this up, will revert with findings."*
+
+## 2. Reproduce / verify
+
+- [ ] Re-read the user's `short_description` and `description`.
+- [ ] If the issue is reproducible, capture: timestamp, user ID, transaction code, error message text, and a screenshot if user provided one.
+- [ ] **Do not** ask the user to re-run anything destructive. Read-only retries only.
+
+## 3. Check known causes (from similar incidents)
+
+{% if similar_incidents %}
+{% for si in similar_incidents[:3] %}
+- [ ] **Hypothesis {{ loop.index }}** — *{{ si.close_code }}*. Similar to {{ si.number }}. Look for the symptoms described in:
+  > {{ si.close_notes_excerpt | truncate(180, true, "...") }}
+{% endfor %}
+{% else %}
+- [ ] No closely matching historical incidents — proceed with general SAP issue triage.
+{% endif %}
+
+## 4. Apply KBA if applicable
+
+{% if kba_matches and kba_matches[0].score >= kba_threshold %}
+{% for kba in kba_matches[:2] %}
+- [ ] Review **{{ kba.kb_number }}** — {{ kba.short_description }}.
+{% endfor %}
+- [ ] Walk through the KBA steps in a non-production environment first if possible.
+{% else %}
+- [ ] No KBA above the confidence threshold. Search the KB manually if needed.
+{% endif %}
+
+## 5. Safe diagnostics (no impact)
+
+- [ ] Check user authorizations / role assignments via SU01 (read-only).
+- [ ] Check transaction logs / system messages relevant to the reported transaction.
+- [ ] Confirm the user's client, system, and country code match the affected business service: `{{ predicted_service_top3[0].label }}`.
+
+## 6. Decision point
+
+- [ ] If hypothesis confirmed → apply standard fix and record close code.
+- [ ] If unclear → escalate to **{{ predicted_group_top3[0].label }}** with all collected evidence.
+- [ ] If multiple users impacted → raise to a **major incident** review before any change.
+
+## 7. Close-out
+
+- [ ] Add resolution summary to `close_notes`.
+- [ ] Pick a `close_code` from the standard list (e.g. *Solution provided*, *Resolved by request*, *Workaround provided*).
+- [ ] Confirm with the user before closing.
+
+---
+*All steps above are intentionally generic and non-destructive. This runbook is a checklist, not an automation.*

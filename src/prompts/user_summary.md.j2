@@ -1,0 +1,46 @@
+{# user_summary.md.j2
+   Shown to the END USER who reported the incident.
+   Tone: friendly, plain English, NO technical jargon.
+   Self-resolution suggestions appear ONLY when at least one KBA passed
+   the similarity threshold.  If kba_matches is empty, we tell the user
+   honestly that no automated suggestion is available.
+#}
+# Update on your incident {{ incident.number }}
+
+Hi {{ incident.caller_first_name or "there" }},
+
+Thanks for reporting **"{{ incident.short_description }}"**. We have logged your ticket and our team is looking at it.
+
+{% if kba_matches and kba_matches[0].score >= kba_threshold %}
+## A few things you can try yourself
+
+While our team picks up the ticket, here are a couple of safe, non-destructive steps that have helped users with very similar issues in the past:
+
+{% for kba in kba_matches[:2] %}
+**{{ loop.index }}. {{ kba.short_description }}** *(reference: {{ kba.kb_number }})*
+
+{{ kba.introduction | default("", true) | truncate(280, true, "...") }}
+
+{% if kba.instructions_excerpt %}
+> {{ kba.instructions_excerpt | truncate(280, true, "...") }}
+{% endif %}
+
+{% endfor %}
+
+If any of those resolves the problem, just reply on the ticket and we will close it for you.
+{% else %}
+## What happens next
+
+We have not found a known self-help guide that closely matches your issue, so our IT team will work on it directly. You do not need to do anything right now — we will reach out if we need more information.
+{% endif %}
+
+## Expected response
+
+Based on similar tickets, this type of issue is usually picked up by **{{ predicted_group | replace("KONE.", "") | replace("CUST.", "") }}** team.
+
+Thanks for your patience.
+
+— IT Service Desk
+
+---
+*This update was drafted automatically based on your ticket details. An agent will follow up.*

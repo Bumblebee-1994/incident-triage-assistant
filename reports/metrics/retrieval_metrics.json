@@ -1,0 +1,12 @@
+{
+  "kba_pct_above_threshold": 4.844036697247707,
+  "kba_median_max_similarity": 0.12378255075371365,
+  "kba_mean_max_similarity": 0.13783330321536438,
+  "kba_threshold": 0.25,
+  "similar_incident_recall_at_k": {
+    "1": 0.8730275229357798,
+    "3": 0.9585321100917431,
+    "5": 0.9757798165137614,
+    "10": 0.9922935779816514
+  }
+}

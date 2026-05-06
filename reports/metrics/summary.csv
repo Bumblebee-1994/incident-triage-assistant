@@ -1,0 +1,5 @@
+task,split,n_classes,n_samples,accuracy,macro_f1,weighted_f1
+assignment_group,val,3,2726,0.9332,0.7786,0.9341
+assignment_group,test,3,2725,0.9383,0.7997,0.9383
+business_service,val,36,2714,0.6242,0.1816,0.6803
+business_service,test,36,2699,0.6225,0.1406,0.6795

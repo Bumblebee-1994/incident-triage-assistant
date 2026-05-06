@@ -1,0 +1,60 @@
+{
+  "name": "Incident Triage Assistant",
+  "image": "mcr.microsoft.com/devcontainers/python:1-3.11-bookworm",
+
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/node:1": { "version": "20" }
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "GitHub.copilot",
+        "GitHub.copilot-chat",
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-toolsai.jupyter",
+        "eamodio.gitlens",
+        "redhat.vscode-yaml",
+        "tamasfe.even-better-toml",
+        "yzhang.markdown-all-in-one"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "python.testing.pytestEnabled": true,
+        "python.testing.pytestArgs": ["tests"],
+        "[python]": {
+          "editor.formatOnSave": false,
+          "editor.tabSize": 4
+        },
+        "files.exclude": {
+          "**/__pycache__": true,
+          "**/.pytest_cache": true,
+          "**/*.pyc": true
+        },
+        "github.copilot.enable": {
+          "*": true,
+          "plaintext": true,
+          "markdown": true,
+          "yaml": true
+        }
+      }
+    }
+  },
+
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
+
+  "forwardPorts": [5000, 8000],
+  "portsAttributes": {
+    "5000": { "label": "Flask demo (live)", "onAutoForward": "openPreview" },
+    "8000": { "label": "Static GH Pages preview", "onAutoForward": "silent" }
+  },
+
+  "remoteUser": "vscode",
+
+  "containerEnv": {
+    "PYTHONUNBUFFERED": "1",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  }
+}

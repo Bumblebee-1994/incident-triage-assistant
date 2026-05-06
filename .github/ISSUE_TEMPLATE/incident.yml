@@ -1,0 +1,52 @@
+name: 🚨 Incident — request auto-triage
+description: Open an issue describing an incident; the auto-triage workflow will analyze it.
+title: "[INC] "
+labels: ["incident"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        > Filing this issue triggers the **auto-triage workflow**. Within ~1 minute,
+        > a bot will post a comment with the predicted assignment group, KBA matches,
+        > and 5 most similar historical incidents.
+
+  - type: input
+    id: short_description
+    attributes:
+      label: Short description
+      description: One-line summary, like a ServiceNow short_description.
+      placeholder: "User cannot log in to SAP — account locked"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Full description
+      description: Error messages, transaction codes, screenshots — anything you would put on a real ticket.
+      placeholder: |
+        When trying to log in to SAP I get error S001 (User locked).
+        Last successful login was Friday. T-codes attempted: ME21N, MIRO.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      options:
+        - "1 - Critical"
+        - "2 - High"
+        - "3 - Moderate"
+        - "4 - Low"
+      default: 2
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Confirmations
+      options:
+        - label: "I understand this is a hackathon demo, not a real ticket queue."
+          required: true
